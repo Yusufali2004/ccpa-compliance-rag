@@ -1,0 +1,39 @@
+# --- Environments ---
+# Prevents uploading 100MB+ of library files
+venv/
+.venv/
+env/
+bin/
+lib/
+develop-eggs/
+dist/
+eggs/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+
+# --- Secrets & Config ---
+# Crucial: Keeps your Hugging Face token private
+.env
+.flaskenv
+secrets.toml
+
+# --- Python Metadata ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Database & Local Cache ---
+# Keep these if you want a totally fresh DB on every deploy, 
+# but for your RAG, ensure 'ccpa_db/' is NOT in this list.
+.ipynb_checkpoints
+.pytest_cache/
+
+# --- OS Specific ---
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
