@@ -1,22 +1,34 @@
 # ⚖️ CCPA Compliance RAG Engine
+**Team:** Algo Ninjas | **Event:** OpenHack 2026 (IISc Bangalore)
 
-An entirely local, highly-optimized Retrieval-Augmented Generation (RAG) API built to analyze business data practices for California Consumer Privacy Act (CCPA) compliance. 
+A Hybrid Retrieval-Augmented Generation (RAG) system designed to automate the detection of CCPA (California Consumer Privacy Act) violations in business data practices.
 
-Powered by **Qwen-2.5-7B-Instruct** (quantized to 4-bit) and **ChromaDB**, packaged perfectly into a single Docker container.
+## 🚀 System Architecture
+The engine utilizes a **Multi-Layered Pipeline** to balance high-speed deterministic checks with deep agentic reasoning.
 
-## 🚀 Architecture Highlights
-* **100% Local Inference:** No external OpenAI API calls. The 7-Billion parameter LLM runs entirely within the Docker container.
-* **Smart RAG Pipeline:** Uses `SentenceTransformers` (`all-MiniLM-L6-v2`) and ChromaDB to chunk and semantically retrieve relevant CCPA statutes from the official PDF.
-* **Memory Safe:** Implements strict context-window truncation to prevent CUDA Out-Of-Memory (OOM) crashes on consumer GPUs.
-* **Strict JSON Enforcement:** API strictly enforces the requested JSON schema (`harmful: bool`, `articles: List[str]`) using FastAPI and Pydantic validation.
-* **Rubric Compliant:** Model weights are baked into the image at *build time*, and the Hugging Face token is passed securely via build arguments, ensuring lightning-fast boot times without hardcoded secrets.
+1. **Rule-Based Analysis:** Instant detection of high-risk patterns (e.g., unauthorized sale of minor's data without parental consent).
+2. **Semantic RAG Layer:** - **Vector Store:** ChromaDB indexing the official CCPA Statute PDF.
+   - **Embeddings:** `all-MiniLM-L6-v2` generating semantic maps of legal text.
+3. **Agentic Reasoning:** Powered by **Qwen-2.5-7B-Instruct** via Hugging Face Inference API for interpreting complex legal nuance.
+4. **Deterministic Output:** Strict Pydantic validation ensuring `{"harmful": bool, "articles": []}` schema compliance.
 
----
+## 🛠️ Tech Stack
+- **Backend:** FastAPI (Async Orchestration).
+- **Frontend:** Streamlit (Real-time Compliance Dashboard).
+- **Database:** ChromaDB (Persistent Vector Store).
+- **LLM:** Qwen-2.5-7B (Quantized Inference).
 
-## 🛠️ How to Build and Run
+## 🧪 Complexity Analysis
+- **Time Complexity:** $O(K \log N)$ for vector retrieval, where $N$ is the number of law chunks.
+- **Architecture:** Hybrid (Local Vector Storage + Cloud Inference).
 
-### 1. Build the Docker Image
-To comply with security requirements, the Hugging Face token is passed as a build argument. The Dockerfile processes the CCPA PDF and bakes the 14GB LLM weights directly into the image so inference can start immediately.
+## ⚙️ Setup & Installation
+1. Clone the repo: `git clone https://github.com/Yusufali2004/ccpa-compliance-rag.git`
+2. Install dependencies: `pip install -r requirements.txt`
+3. Set your `HF_TOKEN` in `.env` or Streamlit Secrets.
+4. Launch app: `streamlit run app.py`
 
-```bash
-docker build --build-arg HF_TOKEN="your_huggingface_token" -t ccpa-compliance-api .
+## 👥 Team Algo Ninjas
+- **Md Yusuf Ali:** Chief AI Architect & Backend Lead
+- **Md Irfan:** Frontend Engineer
+- **Mohammad Arif Siddiq:** Data Engineer
