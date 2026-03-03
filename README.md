@@ -30,5 +30,5 @@ The engine utilizes a **Multi-Layered Pipeline** to balance high-speed determini
 
 ## 👥 Team Algo Ninjas
 - **Md Yusuf Ali:** Chief AI Architect & Backend Lead
-- **Md Irfan:** Frontend Engineer
+- **Md Irfan Ahmed:** Frontend Engineer
 - **Mohammad Arif Siddiq:** Data Engineer

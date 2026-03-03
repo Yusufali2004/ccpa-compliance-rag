@@ -5,7 +5,7 @@ import time
 # ---------------------------
 # Configuration
 # ---------------------------
-API_BASE = "http://localhost:8000"
+API_BASE = "http://localhost:8000/analyze"
 API_ANALYZE = f"{API_BASE}/analyze"
 API_HEALTH = f"{API_BASE}/health"
 
