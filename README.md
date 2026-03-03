@@ -26,7 +26,7 @@ The engine utilizes a **Multi-Layered Pipeline** to balance high-speed determini
 1. Clone the repo: `git clone https://github.com/Yusufali2004/ccpa-compliance-rag.git`
 2. Install dependencies: `pip install -r requirements.txt`
 3. Set your `HF_TOKEN` in `.env` or Streamlit Secrets.
-4. Launch app: `streamlit run app.py`
+4. Launch app: `python -m uvicorn main:app --port 8000 & streamlit run app.py`
 
 ## 👥 Team Algo Ninjas
 - **Md Yusuf Ali:** Chief AI Architect & Backend Lead
