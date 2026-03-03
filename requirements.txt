@@ -1,20 +1,13 @@
-# --- Backend ---
 fastapi==0.110.0
 uvicorn==0.29.0
 pydantic==2.6.4
-
-# --- Frontend ---
 streamlit==1.35.0
-
-# --- ML / RAG ---
 chromadb==0.4.24
 sentence-transformers>=2.2.2
 transformers>=4.40.0
 huggingface-hub>=1.5.0
 accelerate==0.26.1
-torch
-
-# --- Utilities ---
 requests==2.31.0
 pypdf==4.0.1
 python-dotenv==1.0.1
+torch

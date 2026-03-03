@@ -2,7 +2,6 @@ import os
 import json
 import re
 from typing import List
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 import chromadb
@@ -16,26 +15,23 @@ load_dotenv()
 app = FastAPI()
 
 # --- Secure HF Token Loading ---
-# Looks for HF_TOKEN in .env or Streamlit Secrets
 HF_TOKEN = os.getenv("HF_TOKEN")
-
 MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 
-# Initialize client only if token is present to avoid early crashes
+# Initialize client only if token is present
 hf_client = None
 if HF_TOKEN:
     hf_client = InferenceClient(model=MODEL_NAME, token=HF_TOKEN)
 
-# --- Load ChromaDB ---
+# --- Load ChromaDB safely ---
 client = chromadb.PersistentClient(path="./ccpa_db")
 embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
     model_name="all-MiniLM-L6-v2"
 )
 
-# Get collection safely
 try:
     collection = client.get_collection(name="ccpa_statutes", embedding_function=embed_fn)
-except:
+except Exception:
     collection = None
 
 class AnalyzeRequest(BaseModel):
@@ -47,8 +43,9 @@ class AnalyzeResponse(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "db_loaded": collection is not None, "llm_ready": HF_TOKEN is not None}
+    return {"status": "ok", "db_loaded": collection is not None, "llm_ready": hf_client is not None}
 
+# Core Logic: Deterministic Rules
 def rule_based_analysis(text: str):
     t = text.lower()
     if "sell" in t and "without" in t and ("inform" in t or "notice" in t):
@@ -73,9 +70,10 @@ def rule_based_analysis(text: str):
         return False, []
     return None, None
 
+# Core Logic: LLM RAG Fallback
 def llm_analysis(prompt: str):
     if not hf_client or not collection:
-        return False, ["Error: Backend resources not initialized"]
+        return False, ["Error: AI services not initialized"]
     try:
         results = collection.query(query_texts=[prompt], n_results=3)
         docs = results.get("documents", [[]])[0]
@@ -92,7 +90,7 @@ def llm_analysis(prompt: str):
         parsed = json.loads(match.group(0))
         return parsed.get("harmful", False), parsed.get("articles", [])
     except Exception as e:
-        return False, [f"LLM Error: {str(e)}"]
+        return False, [f"Analysis Error: {str(e)}"]
 
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(request: AnalyzeRequest):
