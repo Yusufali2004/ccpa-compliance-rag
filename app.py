@@ -1,13 +1,9 @@
 import streamlit as st
-import requests
 import time
+import os
 
-# ---------------------------
-# Configuration
-# ---------------------------
-API_BASE = "http://localhost:8000/analyze"
-API_ANALYZE = f"{API_BASE}/analyze"
-API_HEALTH = f"{API_BASE}/health"
+# Import backend logic directly for "Single-Process" mode on Streamlit Cloud
+from main import rule_based_analysis, llm_analysis
 
 st.set_page_config(
     page_title="CCPA Compliance Engine",
@@ -15,98 +11,58 @@ st.set_page_config(
     layout="wide"
 )
 
+# --- Check for Token ---
+if not os.getenv("HF_TOKEN"):
+    st.error("🔑 HF_TOKEN missing. Please add it to your .env file or Streamlit Secrets.")
+    st.stop()
+
 st.title("⚖️ AI-Powered CCPA Compliance Engine")
-st.markdown("Analyze business practices against California Consumer Privacy Act (CCPA) statutes.")
+st.caption("Algo Ninjas | OpenHack 2026 Submission")
+st.markdown("Analyze business practices against CCPA statutes using Hybrid RAG.")
 
 st.divider()
 
-# ---------------------------
-# Backend Health Check
-# ---------------------------
-try:
-    health = requests.get(API_HEALTH, timeout=3)
-    if health.status_code == 200:
-        st.success("🟢 Backend Connected")
-    else:
-        st.warning("🟡 Backend responding unexpectedly")
-except:
-    st.error("🔴 Backend not running. Start FastAPI first.")
-    st.stop()
-
-# ---------------------------
-# Input Box
-# ---------------------------
+# --- Input Box ---
 practice = st.text_area(
     "Enter a Business Practice to Analyze:",
     height=150,
-    placeholder="Example: We sell user data to advertisers without opt-out options..."
+    placeholder="Example: We sell user data of 14-year-old minors without parental consent..."
 )
 
-# ---------------------------
-# Submit Button
-# ---------------------------
-if st.button("Analyze Compliance Engine", type="primary", use_container_width=True):
-
+if st.button("Analyze Compliance", type="primary", use_container_width=True):
     if not practice.strip():
-        st.warning("⚠️ Please enter a business practice to analyze.")
+        st.warning("⚠️ Please enter a business practice.")
     else:
         start_time = time.time()
+        with st.spinner("🧠 Analyzing via Hybrid RAG Engine..."):
+            # Step 1: Deterministic Rules
+            harmful, articles = rule_based_analysis(practice)
+            mode = "Deterministic Rules"
 
-        with st.spinner("🧠 Running Compliance Analysis..."):
-            try:
-                response = requests.post(
-                    API_ANALYZE,
-                    json={"prompt": practice},
-                    timeout=120
-                )
+            # Step 2: Fallback to LLM if needed
+            if harmful is None:
+                harmful, articles = llm_analysis(practice)
+                mode = "RAG + Qwen-2.5-7B"
 
-                if response.status_code == 200:
-                    end_time = time.time()
-                    result = response.json()
+            end_time = time.time()
 
-                    harmful = result.get("harmful", False)
-                    articles = result.get("articles", [])
+            st.divider()
+            st.subheader("📊 Analysis Report")
 
-                    st.divider()
-                    st.subheader("📊 Analysis Report")
-
-                    col1, col2 = st.columns([2, 1])
-
-                    with col1:
-                        if harmful:
-                            st.error("🚨 CCPA VIOLATION DETECTED")
-                            if articles:
-                                st.markdown("Violated Sections:")
-                                for a in articles:
-                                    st.markdown(f"- {a}")
-                            else:
-                                st.markdown("Violation detected but no specific section returned.")
-                        else:
-                            st.success("✅ FULLY COMPLIANT")
-                            st.markdown("No CCPA violations detected.")
-
-                    with col2:
-                        st.metric(
-                            label="Inference Time",
-                            value=f"{round(end_time - start_time, 2)} sec"
-                        )
-                        st.metric(
-                            label="Processing Mode",
-                            value="RAG + HF Inference"
-                        )
-
-                    with st.expander("🛠 Raw API JSON"):
-                        st.json(result)
-
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                if harmful:
+                    st.error("🚨 CCPA VIOLATION DETECTED")
+                    for a in articles:
+                        st.markdown(f"**Violated:** {a}")
                 else:
-                    st.error(f"❌ API Error {response.status_code}")
-                    st.code(response.text)
+                    st.success("✅ FULLY COMPLIANT")
+                    st.markdown("No violations found in the provided text.")
 
-            except requests.exceptions.Timeout:
-                st.error("⏳ Request timed out. Model may still be loading.")
+            with col2:
+                st.metric("Inference Time", f"{round(end_time - start_time, 2)}s")
+                st.metric("Processing Mode", mode)
 
-            except requests.exceptions.ConnectionError:
-                st.error("🔴 Cannot connect to backend.")
-
-            except Exception as e:
-                st.error(f"Unexpected error: {str(e)}")
+            with st.expander("🛠 Architecture Details"):
+                st.write(f"**Database:** ChromaDB (Local)")
+                st.write(f"**LLM:** Qwen-2.5-7B-Instruct (Cloud)")
