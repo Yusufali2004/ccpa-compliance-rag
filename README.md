@@ -3,9 +3,12 @@
 
 A Hybrid Retrieval-Augmented Generation (RAG) system designed to automate the detection of CCPA (California Consumer Privacy Act) violations in business data practices.
 
-## 🚀 Live Demo
-🌐 **Link:** [https://ccpa-compliance-rag-aa.streamlit.app/](https://ccpa-compliance-rag-aa.streamlit.app/)
 
+## 🚀 Live Demo & Video
+- **Live Dashboard:** [https://ccpa-compliance-rag-aa.streamlit.app/](https://ccpa-compliance-rag-aa.streamlit.app/)
+- **LinkedIn Demo:** [LinkedIn Post](https://www.linkedin.com/posts/md-yusuf-ali-_rift2026-activity-7430421159927537665-kiD0?utm_source=share&utm_medium=member_android&rcm=ACoAADodLfYBY_EZsUvRi6Nqo9dGHfrBOYTUpyA)
+
+  
 ## 🏗️ System Architecture
 The engine utilizes a **Multi-Layered Hybrid Pipeline** to balance high-speed deterministic checks with deep agentic reasoning:
 
