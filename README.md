@@ -32,7 +32,20 @@ The engine utilizes a **Multi-Layered Hybrid Pipeline** to balance high-speed de
 1. Clone the repo: `git clone https://github.com/Yusufali2004/ccpa-compliance-rag.git`
 2. Install dependencies: `pip install -r requirements.txt`
 3. Set your `HF_TOKEN` in a local `.env` file or Streamlit Secrets.
-4. Launch app: `streamlit run app.py`
+4. Launch Application:
+To run the full hybrid system locally, open two terminals:
+
+Terminal 1 (Backend API):
+
+```bash
+python -m uvicorn main:app --port 8000
+```
+
+Terminal 2 (Frontend UI):
+
+```bash
+streamlit run app.py
+````
 
 ## 👥 Team Algo Ninjas
 - **Md Yusuf Ali:** Chief AI Architect & Backend Lead
