@@ -6,7 +6,7 @@ A Hybrid Retrieval-Augmented Generation (RAG) system designed to automate the de
 
 ## 🚀 Live Demo & Video
 - **Live Dashboard:** [https://ccpa-compliance-rag-aa.streamlit.app/](https://ccpa-compliance-rag-aa.streamlit.app/)
-- **LinkedIn Demo:** [LinkedIn Post](https://www.linkedin.com/posts/md-yusuf-ali-_rift2026-activity-7430421159927537665-kiD0?utm_source=share&utm_medium=member_android&rcm=ACoAADodLfYBY_EZsUvRi6Nqo9dGHfrBOYTUpyA)
+- **LinkedIn Demo:** [LinkedIn Post](https://www.linkedin.com/posts/md-yusuf-ali-_openhack2026-iisc-algoninjas-activity-7434849210149163008-mVIT?utm_source=share&utm_medium=member_desktop&rcm=ACoAADodLfYBY_EZsUvRi6Nqo9dGHfrBOYTUpyA)
 
   
 ## 🏗️ System Architecture
